@@ -83,36 +83,7 @@ aws eks update-kubeconfig --name <cluster-name>  --region <region>
 ```
 
 
-### Install the ALB Ingress Controller [ optinal/ No Need manually to do ]
 
-```
-helm repo add eks https://aws.github.io/eks-charts
-helm repo update
-
-helm search repo eks
-
-helm install alb-ingress-controller eks/aws-load-balancer-controller \
-  --namespace kube-system \
-  --set clusterName=<cluster-name> \
-  --set serviceAccount.create=false \
-  --set serviceAccount.name=alb-ingress-controller \
-  --set ingressClass=alb \
-  --set vpcID=<vpc-id>
-
-or
-
-helm install alb-ingress-controller eks/aws-load-balancer-controller \
-  --namespace kube-system \
-  --set clusterName=edc-dev \
-  --set vpcID=vpc-0e3b7551dd34b85c3  \
-  --set region=eu-central-1
-
-```
-
-### Verify
-
-```
-kubectl logs -f deployment.apps/alb-ingress-controller-aws-load-balancer-controller -n kube-system
 
 ```
 ## Post-Deployment Configuration
