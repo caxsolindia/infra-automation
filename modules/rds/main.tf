@@ -1,13 +1,3 @@
-# modules/rds/main.tf
-
-provider "aws" {
-  region = var.region
-}
-
-# Reference VPC
-data "aws_vpc" "custom_vpc" {
-  id = var.vpc_id
-}
 
 # RDS Subnet Group
 resource "aws_db_subnet_group" "example" {
@@ -93,7 +83,7 @@ resource "aws_db_parameter_group" "custom_pg_parameter_group" {
 
 
 # RDS instance
-resource "aws_db_instance" "edc-db" {
+resource "aws_db_instance" "this" {
   allocated_storage    = var.allocated_storage
   storage_type         = var.storage_type
   engine               = var.engine
