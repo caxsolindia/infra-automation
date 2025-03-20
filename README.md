@@ -142,29 +142,7 @@ spec:
               number: 80
 ```
 
-Save the above configuration in a file named ingress.yaml.
-Apply the configuration using kubectl
 
-``` kubectl apply -f ingress.yaml ```
-
-
-Verify the Deployment
-
-Check if the service account has been created successfully:
-
-``` kubectl get serviceaccount application-service-account -n default ```
-
-Verify that the ingress is properly configured and an ALB has been provisioned:
-
-``` kubectl get ingress my-app-ingress -n default ```
-
-Check the logs of the ALB ingress controller to ensure there are no errors:
-
-``` kubectl logs -f deployment.apps/alb-ingress-controller-aws-load-balancer-controller -n kube-system ```
-
-
-
-Once the ingress is active, access your application using the external ALB DNS name or IP displayed under kubectl get ingress.
 
 ### Updating aws-auth ConfigMap for Service Account Access
 
@@ -200,9 +178,4 @@ In nano editor: Press Ctrl+X, then Y, and hit Enter.
 Run the following command to confirm the role has been added:
 
 ``` kubectl get cm aws-auth -n kube-system -o yaml ```
-
-You should see the newly added role under mapRoles.
-
-Purpose
-Adding this role ensures that the service account has the required permissions to interact with the EKS cluster when used inside scripts for alb-ingress.
 
