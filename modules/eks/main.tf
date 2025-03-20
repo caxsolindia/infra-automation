@@ -58,14 +58,6 @@ resource "aws_eks_cluster" "eks_cluster" {
     "scheduler"
   ]
 
-# 58
-  encryption_config {
-    provider {
-      key_arn = aws_kms_key.eks_secrets_key.arn
-    }
-    resources = ["secrets"]
-  }
-
   depends_on = [
     aws_iam_role_policy_attachment.eks_cluster_AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.eks_cluster_AmazonEKSVPCResourceController,
@@ -76,23 +68,6 @@ resource "aws_eks_cluster" "eks_cluster" {
     Name = "eks-cluster"
   }
 }
-
-# Generate an SSH Key Pair
-resource "tls_private_key" "eks_node_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
-# Create an AWS Key Pair from the generated OpenSSH-compatible public key
-resource "aws_key_pair" "eks_node_key_pair" {
-  key_name   = "eks-node-key"
-  public_key = tls_private_key.eks_node_key.public_key_openssh
-
-  tags = {
-    Name = "eks-node-key"
-  }
-}
-
 
 # IAM Role for EKS Node Group
 resource "aws_iam_role" "eks_node_role" {
@@ -129,44 +104,14 @@ resource "aws_iam_role_policy_attachment" "eks_node_AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
-resource "aws_iam_role_policy_attachment" "eks_node_AmazonEKS_EBS_Policy" {
-  role       = aws_iam_role.eks_node_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
-}
 
-# Launch Template for EKS Nodes
-resource "aws_launch_template" "eks_launch_template" {
-  name          = "eks-node-launch-template"
-  instance_type = var.instance_types[0]  # Use the first instance type from the list
-  key_name      = aws_key_pair.eks_node_key_pair.key_name
 
-  metadata_options {
-    http_tokens              = "required"
-    http_put_response_hop_limit = 2
-    http_endpoint            = "enabled"
-  }
-
-  block_device_mappings {
-    device_name = "/dev/xvda"
-    ebs {
-      volume_size           = 50
-      volume_type           = "gp3"
-      delete_on_termination = true
-    }
-  }
-}
 # EKS Node Group
 resource "aws_eks_node_group" "eks_node_group" {
   cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "eks-node-group"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = var.subnet_ids
-  #ami_type       = "AL2023_ARM_64_STANDARD"
-
-  launch_template {
-    id      = aws_launch_template.eks_launch_template.id
-    version = "$Latest"
-  }
 
   scaling_config {
     desired_size = 3
@@ -186,48 +131,3 @@ resource "aws_eks_node_group" "eks_node_group" {
 }
 
 
-resource "aws_kms_key" "eks_secrets_key" {
-  description             = "KMS key for EKS secrets encryption"
-  deletion_window_in_days = 30
-
-  tags = {
-    Name = "eks-secrets-key"
-  }
-}
-
-resource "aws_kms_alias" "eks_secrets_key_alias" {
-  name          = "alias/eks-secrets-keytest"
-  target_key_id = aws_kms_key.eks_secrets_key.id
-}
-
-
-
-resource "aws_iam_policy" "eks_secrets_kms_policy" {
-  name        = "eks-secrets-kms-policy"
-  description = "Policy for EKS secrets encryption"
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect    = "Allow",
-        Action    = "kms:Encrypt",
-        Resource  = aws_kms_key.eks_secrets_key.arn
-      },
-      {
-        Effect    = "Allow",
-        Action    = [
-          "kms:Decrypt",
-          "kms:DescribeKey",
-          "kms:GenerateDataKey*",
-        ],
-        Resource  = aws_kms_key.eks_secrets_key.arn
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_cluster_secrets_kms" {
-  role       = aws_iam_role.eks_cluster_role.name
-  policy_arn = aws_iam_policy.eks_secrets_kms_policy.arn
-}
