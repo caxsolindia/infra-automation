@@ -10,6 +10,31 @@ This repository provides a complete infrastructure setup for an Amazon EKS clust
 ## Architecture
 <img src="https://github.com/caxsolindia/eks-terraform-module/blob/main/architecuture_diagram/eks_architecture.png" />
 
+## Directory Structure
+```
+EKS-Terraform-GitHub-Actions/
+├── .github/
+│   └── workflows/
+│       └── terraform.yml
+├── modules/
+│   ├── add-on/
+│   ├── alb-ingress/
+│   ├── eks/
+│   ├── oidc/
+│   ├── rbac/
+│   ├── rds/
+│   ├── vpc/
+├── .gitattributes
+├── .gitignore
+├── .terraformignore
+├── README.md
+├── backend.tf
+├── main.tf
+├── outputs.tf
+├── provider.tf
+├── terraform.tfvars
+└── variables.tf
+```
 ### Prerequisites
 
 Terraform v0.12+
