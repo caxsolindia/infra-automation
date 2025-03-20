@@ -115,7 +115,7 @@ Apply the configuration using kubectl
 
 An ingress resource routes external traffic to services within your Kubernetes cluster. Below is the sample configuration for an ALB ingress:
 
-``` 
+```
 cat ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -123,12 +123,10 @@ metadata:
   name: my-app-ingress
   namespace: default
   annotations:
-    kubernetes.io/ingress.class: alb # Specifies the ALB ingress class
-    alb.ingress.kubernetes.io/scheme: internet-facing # Makes the ALB public; use "internal" for private ALB
-    alb.ingress.kubernetes.io/target-type: ip # Routes traffic to the IPs of pods
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]' # Configures the ALB to listen on port 80
-    # alb.ingress.kubernetes.io/subnets: "<subnet-1-id>,<subnet-2-id>" # Replace with your subnet IDs
-    # alb.ingress.kubernetes.io/security-groups: "<security-group-id>" # Replace with your ALB security group ID
+    kubernetes.io/ingress.class: alb 
+    alb.ingress.kubernetes.io/scheme: internet-facing 
+    alb.ingress.kubernetes.io/target-type: ip 
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]' 
 spec:
   rules:
   - http:
