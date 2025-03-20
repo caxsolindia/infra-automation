@@ -58,10 +58,10 @@ Basic knowledge of Terraform and AWS EKS.
 ### Clone the Repository:
 
 ``` 
-git clone https://github.com/caxsolindia/eks-terraform-module.git
+git clone https://github.com/caxsolindia/eks-automation.git
 ```
 ``` 
-cd eks-terraform-module
+cd eks-automation
 ```
 
 ### Configure AWS CLI: Make sure the AWS CLI is configured with the necessary permissions.
