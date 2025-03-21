@@ -8,7 +8,8 @@ This project provides a modular approach to setting up an Amazon EKS cluster usi
 This repository provides a complete infrastructure setup for an Amazon EKS cluster using modularized Terraform scripts. Each module is independently responsible for provisioning specific components of the cluster, enabling better modularity and reusability.
 
 ## Architecture
-<img src="https://github.com/caxsolindia/eks-terraform-module/blob/main/architecuture_diagram/eks_architecture.png" />
+![eks_architecture](https://github.com/user-attachments/assets/07e93724-4484-4c68-b8c1-f640ea8c76b8)
+
 
 ## Directory Structure
 ```
